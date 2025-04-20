@@ -1,0 +1,37 @@
+@page "/divisions"
+@using Application.Dto
+@inject Application.Interfaces.IDivisionService DivisionService
+
+<h2>Дерево подразделений</h2>
+
+@if (divisionTree == null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <ul>
+        @foreach(var node in divisionTree)
+        {
+            <li>
+                <strong>@node.Order</strong> - @node.Name
+                @if(node.Children.Any())
+                {
+                    <ul>
+                        @foreach(var child in node.Children)
+                        {
+                            <li>@child.Order - @child.Name</li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    </ul>
+}
+@code {
+    private IList<DivisionNode>? divisionTree;
+    protected override void OnInitialized()
+    {
+        divisionTree = DivisionService.GetHierarchyTree();
+    }
+}
